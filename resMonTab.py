@@ -3,7 +3,7 @@ import psutil
 import serial
 import shutil
 import platform
-import MacTmp
+from tabulate import tabulate
 
 #pySerial settings
 ser = serial.Serial()                                           #make instance of Serial
@@ -21,16 +21,9 @@ total, used, free = shutil.disk_usage(DD1)
 total2, used2, free2 = shutil.disk_usage(DD2)
 coreCount = psutil.cpu_count(logical = False)                   #get number of PHYSICAL cores
 cores = str(coreCount)                             #make it as a string with () and "C"
-if len(cores)==3:
-    cores="|"+cores
-if len(cores)==2:
-    cores="||"+cores
-if len(cores)==1:
-    cores="|||"+cores
 totalMem = round(psutil.virtual_memory().total / 1073741824)    #get total memory size, which is divided by 1073741824 (GIGI constant, actual binary size) and rounded up (so it wont work properly with systems that have less than 1GB RAM)
-
 if totalMem < 10:
-    totalMemStr ="||"+str(totalMem) + "G"                   #if RAM is less that 10GB, put artificial character (space) before actual text (keeps arduino code simpler)
+    totalMemStr = str(totalMem) + "G"                   #if RAM is less that 10GB, put artificial character (space) before actual text (keeps arduino code simpler)
 else:
     totalMemStr = str(totalMem) + "G"                    #if RAM is more or equal than 10GB, write it without space (i defined 5 characters per information (if not stated else) INCLUDING parenthesis "()")
 
@@ -41,30 +34,30 @@ while(1):                                                       #infinite loop, 
     hdd = psutil.disk_usage(DD2).percent                   #   XXX    the same here, i have 2 drives (SSD and HDD)
                                                                 #we need to parse floats (decimal numbers from psutil) to strings
     if cpu < 10:
-        cpuStr = "||" + str(cpu)                                #if CPU usage is under 10%, put 2 artificial characters (spaces) before the value.. as i mentioned, i set every information to be 5 characters including parenthesis and/or decimal places, so we need to fill resot of the space with spaces (also, its prettier)
+        cpuStr = "  " + str(cpu)                                #if CPU usage is under 10%, put 2 artificial characters (spaces) before the value.. as i mentioned, i set every information to be 5 characters including parenthesis and/or decimal places, so we need to fill resot of the space with spaces (also, its prettier)
     elif cpu < 100:
-        cpuStr = "|" + str(cpu)                                 #here the same, but only 1 space. because 98.5 have only 4 characters.. 
+        cpuStr = " " + str(cpu)                                 #here the same, but only 1 space. because 98.5 have only 4 characters.. 
     else:
         cpuStr = str(cpu)                                       #100.0 is 5 characters so there is no need to put spaces in before..
 
     if mem < 10:
-        memStr = "||" + str(mem)                                #the same as in CPU
+        memStr = "  " + str(mem)                                #the same as in CPU
     elif mem < 100:
-        memStr = "|" + str(mem)
+        memStr = " " + str(mem)
     else:
         memStr = str(mem)
 
     if hdd < 10:                                                #   XXX
-        hddStr = "||" + str(hdd)                                #   XXX
+        hddStr = "  " + str(hdd)                                #   XXX
     elif hdd < 100:                                             #   XXX
-        hddStr = "|" + str(hdd)                                 #   XXX
+        hddStr = " " + str(hdd)                                 #   XXX
     else:                                                       #   XXX
         hddStr = str(hdd)                                       #   XXX
 
     if sdd < 10:
-        sddStr = "||" + str(sdd)
+        sddStr = "  " + str(sdd)
     elif sdd < 100:
-        sddStr = "|" + str(sdd)
+        sddStr = " " + str(sdd)
     else:
         sddStr = str(sdd)
     
@@ -73,15 +66,19 @@ while(1):                                                       #infinite loop, 
 
     hdd2t = "%.2f" % (total2/1000**4)
     hdd2t = str(hdd2t) + "TB"
-
     osi= "wind" in osinf
-    cputs=str(MacTmp.CPU_Temp())
 
-    serialDataStr = cpuStr + memStr + sddStr + hddStr + cores + totalMemStr + hdd1t + hdd2t + osinf + cputs#now we concenate all strings together by using "+" operand. By this, we´ll got one long string of data
+    data = [['CPU',' '+cpuStr+'%', cores],
+    ['RAM',' '+memStr+'%', totalMemStr],
+    ['DD1',' '+sddStr+'%', hdd1t],
+    ['DD2',' '+hddStr+'%', hdd2t]]
+    serialDataStr = (tabulate(data, headers=["HWM", "Usage", "Free"]))
+
+    #serialDataStr = cpuStr + memStr + sddStr + hddStr + cores + totalMemStr + hdd1t + hdd2t + osinf #now we concenate all strings together by using "+" operand. By this, we´ll got one long string of data
     serialDataBytes = serialDataStr.encode("UTF-8")             #since we want to send string as series of BYTES, we wncode it to UTF-8 standart. This will put "b" before string, indicating that values are 1B each 
 
-    print(serialDataBytes)                                      #here we print our serial string, used for debugging, can be commented out
+    #print(serialDataBytes)                                      #here we print our serial string, used for debugging, can be commented out
+    print (serialDataStr)
     ser.write(serialDataBytes)                                  #send our long encoded string throught serial interface
 
 ser.close()                                                     #this will never execute, because while loop will go forever. But i like to leave it here to prevent some bugs and bad stuff that could happen, also for you, if you want to include some way of getting out of the COM port
-
