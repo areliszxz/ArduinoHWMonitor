@@ -4,6 +4,7 @@ import serial
 import shutil
 import platform
 import sys
+import subprocess
 
 #Drive's
 DD1=sys.argv[1]
@@ -13,6 +14,7 @@ ser = serial.Serial()                                           #make instance o
 ser.baudrate = 9600                                             #set baud to 9600 (9600b/s)
 ser.port = sys.argv[3]                                          #"/dev/cu.usbserial-550D0034871" replace COM6 with your Arduino port; set serial port
 ser.open()                                                      #open the port
+
 
 #system info that doesn´t need to be refreshed
 osinf=str(platform.platform(terse=True))
@@ -86,9 +88,12 @@ while(1):
     hdd2t = "%.2f" % (total2/1000**4)
     hdd2t = str(hdd2t) + "TB"
 
-    cputs='100'+'C'
+    if
+    result = subprocess.run(['osx-cpu-temp'], stdout=subprocess.PIPE)
+    result=result.stdout.decode('utf-8')
+    cputs=str(result[0:3])
 
-    serialDataStr = cpuStr + memStr + sddStr + hddStr + cores + totalMemStr + hdd1t + hdd2t + osinf[0:10] + cputs
+    serialDataStr = cpuStr + memStr + sddStr + hddStr + cores + totalMemStr + hdd1t + hdd2t + osinf + cputs
     serialDataBytes = serialDataStr.encode("UTF-8")
 
     print(serialDataBytes)
