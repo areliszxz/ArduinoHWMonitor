@@ -3,15 +3,16 @@ import psutil
 import serial
 import shutil
 import platform
+import sys
+
 #Drive's
-DD1="/"
-DD2="/System/Volumes/Data"
+DD1=sys.argv[1]
+DD2=sys.argv[2]
 #pySerial settings
 ser = serial.Serial()                                           #make instance of Serial
 ser.baudrate = 9600                                             #set baud to 9600 (9600b/s)
-ser.port = "/dev/cu.usbserial-550D0034871"                                               #replace COM6 with your Arduino port; set serial port
+ser.port = sys.argv[3]                                          #"/dev/cu.usbserial-550D0034871" replace COM6 with your Arduino port; set serial port
 ser.open()                                                      #open the port
-
 
 #system info that doesn´t need to be refreshed
 osinf=str(platform.platform(terse=True))
