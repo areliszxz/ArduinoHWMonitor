@@ -88,10 +88,18 @@ while(1):
     hdd2t = "%.2f" % (total2/1000**4)
     hdd2t = str(hdd2t) + "TB"
 
-    if
-    result = subprocess.run(['osx-cpu-temp'], stdout=subprocess.PIPE)
-    result=result.stdout.decode('utf-8')
-    cputs=str(result[0:3])
+    ctmac="mac" in osinf 
+    ctwin="win" in osinf 
+
+    if ctmac:
+        result = subprocess.run(['osx-cpu-temp'], stdout=subprocess.PIPE)
+        result=result.stdout.decode('utf-8')
+        cputs=str(result[0:3])
+        
+    if ctwin:
+        result = subprocess.run(['osx-cpu-temp'], stdout=subprocess.PIPE)
+        result=result.stdout.decode('utf-8')
+        cputs=str(result[0:3])
 
     serialDataStr = cpuStr + memStr + sddStr + hddStr + cores + totalMemStr + hdd1t + hdd2t + osinf + cputs
     serialDataBytes = serialDataStr.encode("UTF-8")
