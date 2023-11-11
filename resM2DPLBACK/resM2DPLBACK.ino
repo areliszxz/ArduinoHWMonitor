@@ -23,8 +23,8 @@ void loop(void) {
       drawOLEDA();
       cont_act=0;
     }else if (cont_act==0 and Serial.available() == 0){
-      drawOLEDA();
-      //w_time();
+      //drawOLEDA();
+      w_time();
     }
       delay(500); 
 }
@@ -54,10 +54,10 @@ void drawOLEDA(void) {
   //Lineab
     OLEDA.drawLine(85, firstRow, 95, firstRow, setc_CPU); 
     OLEDA.drawLine(95, firstRow, 105, firstRow-10, setc_CPU);
-    OLEDA.drawLine(105, firstRow-10, 128, firstRow-10, setc_CPU);
+    OLEDA.drawLine(105, firstRow-10, width, firstRow-10, setc_CPU);
   //
   //CPU Cores
-    OLEDA.fillRoundRect(108, 3 , (CPUstat.toInt()*80)/100, 15, 0, 0xc018);
+    OLEDA.fillRoundRect(108, 3 , (CPUstat.toInt()*52)/100, 15, 0, 0xc018);
   OLEDA.setCursor(110, firstRow+2);      
   OLEDA.println(CPUcores);    
   //
@@ -86,10 +86,10 @@ void drawOLEDA(void) {
   //Lineab
     OLEDA.drawLine(85, secondRow, 95, secondRow, setc_RAM); 
     OLEDA.drawLine(95, secondRow, 105, secondRow-10, setc_RAM);
-    OLEDA.drawLine(105, secondRow-10, 128, secondRow-10, setc_RAM);
+    OLEDA.drawLine(105, secondRow-10, width, secondRow-10, setc_RAM);
   //
   //RAM
-    OLEDA.fillRoundRect(108, secondRow-8 , (RAMstat.toInt()*80)/100, 15, 0, 0x9813);
+    OLEDA.fillRoundRect(108, secondRow-8 , (RAMstat.toInt()*52)/100, 15, 0, 0x9813);
   OLEDA.setCursor(110, secondRow+2);      
   OLEDA.println(RAMtotal);    
   //
@@ -126,14 +126,14 @@ void drawOLEDA(void) {
   //Lineab
     OLEDA.drawLine(85, thirdRow, 95, thirdRow, setc_HD); 
     OLEDA.drawLine(95, thirdRow, 105, thirdRow-10, setc_HD);
-    OLEDA.drawLine(105, thirdRow-10, 128, thirdRow-10, setc_HD);
+    OLEDA.drawLine(105, thirdRow-10, width, thirdRow-10, setc_HD);
   // Lineac
     OLEDA.drawLine(85, thirdRow+10, 95, thirdRow+10, setc_HD2); 
     OLEDA.drawLine(95, thirdRow+10, 105, thirdRow+25, setc_HD2);
-    OLEDA.drawLine(105, thirdRow+25, 128, thirdRow+25, setc_HD2);
+    OLEDA.drawLine(105, thirdRow+25, width, thirdRow+25, setc_HD2);
   //
   //SSD
-    OLEDA.fillRoundRect(108, thirdRow-8 , (SSDspace.toInt()*80)/100, 15, 0, 0x780f);
+    OLEDA.fillRoundRect(108, thirdRow-8 , (SSDspace.toInt()*52)/100, 15, 0, 0x780f);
   OLEDA.setCursor(110, thirdRow+2);      
   OLEDA.println(DD1t);    
   //
@@ -141,7 +141,7 @@ void drawOLEDA(void) {
       OLEDA.fillRoundRect(5, thirdRow+8 , 32, 15, 0, 0x580b);
   OLEDA.setCursor(10, thirdRow+18); 
   OLEDA.println(HDDspace);  
-      OLEDA.fillRoundRect(108, thirdRow+8 , (SSDspace.toInt()*80)/100, 15, 0, 0x580b);
+      OLEDA.fillRoundRect(108, thirdRow+8 , (HDDspace.toInt()*52)/100, 15, 0, 0x580b);
   OLEDA.setCursor(110, thirdRow+18);      
   OLEDA.println(DD2t);  
   //
@@ -156,7 +156,7 @@ void drawOLEDA(void) {
   OLEDA.print(osinf); 
   //Logos
     if (osinf.indexOf("mac")!=-1){OLEDA.drawBitmap(55,80,applev232,32,32,0xff3f);}
-    if (osinf.indexOf("win")!=-1){OLEDA.drawBitmap(55,80,win323,24,24,0x053f);}
+    if (osinf.indexOf("win")!=-1 or osinf.indexOf("Win")!=-1){OLEDA.drawBitmap(55,80,win323,32,32,0xff3f);}
   //linea1
     OLEDA.drawLine(1, Row5+5, 40, Row5+5, setc_oth);  
     OLEDA.drawLine(40, Row5+5, 50, Row5-5, setc_oth);
@@ -182,51 +182,18 @@ void drawOLEDA(void) {
   OLEDA.print(cputmp); 
   //
 //END Other
-
-
-
-
-
-/*
-
-  OLEDA.setFont(&Dialog_italic_8);
-  OLEDA.setTextColor(0xc819);  // Draw white text
-  OLEDA.drawLine(0, Row5 + 2, width, Row5 + 2, 0x0380);  //draw vertical line between each row, so it´s more clear to read
-  OLEDA.setCursor(Colinit, Row5);       //set printing position to edge of screen, first row
-  OLEDA.print("OS Ver: "+ osinf);               //print legend text
-  OLEDA.setFont(&muMatrix8ptRegular);
-  OLEDA.setTextColor(0x9af3);  // Draw white text
-  OLEDA.setCursor(Colinit, Row6);      //set printing position to a bit further
-  OLEDA.print("HDD's: ");               //print the value received and split from the Serial
-  OLEDA.setCursor(40, Row6);  
-  OLEDA.print(DD1t);
-  OLEDA.print(" , ");
-  OLEDA.setCursor(85, Row6);  
-  OLEDA.print(DD2t);
-  OLEDA.setCursor(Colinit, Row7);      //set printing position to a bit further
-  OLEDA.print("RAM: ");                  //print percent sign
-  OLEDA.setCursor(35, Row7);  
-  OLEDA.print(RAMtotal);
-  OLEDA.setCursor(Colinit, Row8);      //set printing position to a bit further
-  OLEDA.print("Cores: ");              //print additional information
-  OLEDA.setCursor(35, Row8); 
-  OLEDA.print(CPUcores);              //print additional information
-  OLEDA.setCursor(55, Row8); 
-  OLEDA.print("  Temp: "+cputmp); 
-  OLEDA.drawLine(0, Row8 + 2, width, Row8 + 2, 0x0380);
-  */
- }
+}
 void init_tft(){
-  OLEDA.initR (INITR_144GREENTAB);
+  OLEDA.initR (INITR_BLACKTAB);
   pinMode(TFT_BACKLIGHT, OUTPUT);
   digitalWrite(TFT_BACKLIGHT, HIGH);
-  OLEDA.fillScreen(0x0000);
-  OLEDA.setRotation(3);
+  OLEDA.fillScreen(ST77XX_BLACK);
+  OLEDA.setRotation(1);
 }
 
 void serial_res(){
-    serialReceive = Serial.readString();  //read it as string and put into serialReceive variable
-    CPUstat = serialReceive.substring(0, 5);  //split the long ass received string to substrings. Values i used are those that i defined (5 characters/information) if not stated else
+    serialReceive = Serial.readString(); 
+    CPUstat = serialReceive.substring(0, 5);  
     CPUstat.replace("|"," ");
     RAMstat = serialReceive.substring(5, 10);
     RAMstat.replace("|"," ");
@@ -249,13 +216,13 @@ void w_time(){
       cont_act=1;
       clear_screen=0;
       OLEDA.fillScreen(ST77XX_BLACK);
-      OLEDA.drawBitmap(30,20,wait64,64,64,0xa37f);
+      OLEDA.drawBitmap(50,20,wait64,64,64,0xa37f);
       OLEDA.setFont(&muMatrix8ptRegular);
       OLEDA.setTextColor(0xFC00);  
-      OLEDA.setCursor(35, 100);       
+      OLEDA.setCursor(55, 100);       
       OLEDA.println("En espera");
       OLEDA.setTextColor(0x3546);  
-      OLEDA.setCursor(85, 100);       
+      OLEDA.setCursor(105, 100);       
       OLEDA.println("|||");  
       OLEDA.setTextSize(0);
 }

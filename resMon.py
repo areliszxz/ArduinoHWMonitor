@@ -6,7 +6,9 @@ import platform
 import sys
 import subprocess
 
+import GPUtil
 #Drive's
+
 DD1=sys.argv[1]
 DD2=sys.argv[2]
 #pySerial settings
@@ -15,7 +17,7 @@ ser.baudrate = 9600                                             #set baud to 960
 ser.port = sys.argv[3]                                          #"/dev/cu.usbserial-550D0034871" replace COM6 with your Arduino port; set serial port
 ser.open()                                                      #open the port
 
-
+cpu_tmp=""
 #system info that doesn´t need to be refreshed
 osinf=str(platform.platform(terse=True))
 osinf=osinf[0:10]
@@ -89,23 +91,23 @@ while(1):
     hdd2t = str(hdd2t) + "TB"
 
     ctmac="mac" in osinf 
-    ctwin="win" in osinf 
+    ctwin="Win" in osinf 
 
     if ctmac:
-        result = subprocess.run(['osx-cpu-temp'], stdout=subprocess.PIPE)
+        result=subprocess.run(['osx-cpu-temp'], stdout=subprocess.PIPE)
         result=result.stdout.decode('utf-8')
-        cputs=str(result[0:3])
+        cpu_tmp=str(result[0:3])
         
     if ctwin:
-        result = subprocess.run(['osx-cpu-temp'], stdout=subprocess.PIPE)
-        result=result.stdout.decode('utf-8')
-        cputs=str(result[0:3])
+        gpu=GPUtil.getGPUs()[0]
+        result=str(gpu.temperature)
+        cpu_tmp=result[0:3]
 
-    serialDataStr = cpuStr + memStr + sddStr + hddStr + cores + totalMemStr + hdd1t + hdd2t + osinf + cputs
+    serialDataStr = cpuStr + memStr + sddStr + hddStr + cores + totalMemStr + hdd1t + hdd2t + osinf + cpu_tmp
     serialDataBytes = serialDataStr.encode("UTF-8")
 
     print(serialDataBytes)
-    print(len(serialDataBytes))
+    #print(len(serialDataBytes))
     ser.write(serialDataBytes)
 
 ser.close()
