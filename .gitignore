@@ -1,2 +1,4 @@
 /Pygui
 .DS_Store
+/Gui/build
+/Gui/run
