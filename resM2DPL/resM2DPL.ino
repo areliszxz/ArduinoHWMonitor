@@ -5,6 +5,8 @@
 #include "Fonts/muMatrix8ptRegular.h"
 #include "Fonts/Dialog_italic_8.h"
 
+#include "back.h"
+
 #define SCREEN_WIDTH 128  // OLED display width, in pixels
 #define SCREEN_HEIGHT 160  // OLED display height, in pixels
 
@@ -51,7 +53,7 @@ void setup(void) {
   //OLEDA.begin(SSD1306_SWITCHCAPVCC, 0x3D);  // Default OLED address, usually
    // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   Serial.begin(9600);                       //open serial interface with baud of 9600 (have to be the same as in python script)
-  OLEDA.initR (INITR_BLACKTAB); // initialize a ST7735S chip, black tab
+  OLEDA.initR (INITR_144GREENTAB); // initialize a ST7735S chip, black tab
   pinMode(TFT_BACKLIGHT, OUTPUT);
   digitalWrite(TFT_BACKLIGHT, HIGH); // Backlight on
   OLEDA.fillScreen(0x0000);
@@ -95,6 +97,7 @@ void loop(void) {
 }
 
 void drawOLEDA(void) {
+  backg();
   OLEDA.setTextWrap(false);
   OLEDA.setFont(&muMatrix8ptRegular);
   //OLEDA.setTextSize(2);
@@ -181,3 +184,15 @@ void drawOLEDA(void) {
   OLEDA.print("  Temp: "+cputmp); 
   OLEDA.drawLine(0, Row8 + 2, width, Row8 + 2, 0x0380);
  }
+
+void backg(){
+  int h = 128,w = 128, row, col, buffidx=0;
+  for (row=0; row<h; row++) { // For each scanline...
+    for (col=0; col<w; col++) { // For each pixel...
+      //To read from Flash Memory, pgm_read_XXX is required.
+      //Since image is stored as uint16_t, pgm_read_word is used as it uses 16bit address
+      OLEDA.drawPixel(col, row, pgm_read_word(back + buffidx));
+      buffidx++;
+    } // end pixel
+  }
+}
