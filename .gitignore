@@ -2,3 +2,7 @@
 .DS_Store
 /Gui/build
 /Gui/run
+/Gui-a/run
+/Gui-win/run
+/Gui-win/build
+/Gui-a/build
