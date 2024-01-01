@@ -120,7 +120,7 @@ def main(page):
         DD2=str(dd2)
         #pySerial settings
         ser = serial.Serial(timeout=0)                                           #make instance of Serial
-        ser.baudrate = 9600                                             #set baud to 9600 (9600b/s)
+        ser.baudrate = 115200                                             #set baud to 9600 (9600b/s)
         ser.port = port                                    #"/dev/cu.usbserial-550D0034871" replace COM6 with your Arduino port; set serial port
         ser.open()                                                      #open the port
         #system info that doesn´t need to be refreshed
